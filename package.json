@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "buildit": "node ./node_modules/webpack/bin/webpack.js",
-    "watch": "node ./node_modules/webpack/bin/webpack.js -w",
+    "watch": "node ./node_modules/webpack/bin/webpack.js -w"
   },
   "repository": {
     "type": "git",

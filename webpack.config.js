@@ -5,7 +5,7 @@ module.exports = {
         index: './jsx/app.jsx'
     },
     output: {
-        path: path.join(__dirname, 'js'),
+        path: path.join(__dirname, 'build', 'js'),
         filename: '[name].js'
     },
     mode: 'development',

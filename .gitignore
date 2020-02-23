@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # TernJS port file
-js/index.js
+build/js/index.js

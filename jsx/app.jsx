@@ -10,7 +10,7 @@ import Quiz from './quiz.jsx';
 
 function App() {
     return(
-        <p>hello test</p>
+        <Quiz quizId='0' />
     )
 }
 function AppRouter() {

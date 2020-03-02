@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 
 const Quiz = (props) => {
-    const [quizInfo, setQuizInfo] = useState({
-        score: 0,
-        quiz: {}
-    });
+    const [quiz, setQuiz] = useState({
+        questions: []
+    })
+    const [score, setScore] = useState(0)
+    const [currentQ, setCurrentQ] = useState(0)
+    const [timer, setTimer] = useState(0)
+    const [wait, setWait] = useState(false)
     useEffect(() => {
         // we're just going to return an empty quiz for now
         const newQuiz = {
@@ -41,11 +44,44 @@ const Quiz = (props) => {
                 },
             ]
         }
-        setQuizInfo({quiz: newQuiz});
-        console.log(quizInfo.quiz);
-    }, []);
+        setQuiz(newQuiz)
+    }, [])
+    console.log(quiz);
 
-    return <div>ok</div>;
-};
+    const checkAnswer = (e, num) => {
+        if (quiz.questions[currentQ].answers[num].correct) {
+            alert("YEPPERS");
+        } else {
+            alert("NOPE");
+        }
+    }
+    return (
+        <div className="quiz">
+            {quiz.questions.length > 0 &&
+            <>
+            <div className="question">
+                {<p>{quiz.questions[currentQ].question}</p>}
+                
+            </div>
+            <div className="answers">
+                {
+                    quiz.questions[currentQ].answers.map((question, i) => {
+                        return (
+                            <button 
+                                className="answer" 
+                                data-choice={i} 
+                                key={i}
+                                onClick={(e) => checkAnswer(e, i)}>
+                                {question.text}
+                            </button>
+                        )
+                    })
+                }
+            </div>
+            </>
+            }
+        </div>
+    )
+}
 
-export default Quiz;
+export default Quiz

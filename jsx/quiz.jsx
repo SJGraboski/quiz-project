@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 
 const Quiz = (props) => {
     const [quiz, setQuiz] = useState({
@@ -6,8 +6,13 @@ const Quiz = (props) => {
     })
     const [score, setScore] = useState(0)
     const [currentQ, setCurrentQ] = useState(0)
-    const [timer, setTimer] = useState(0)
+    const [timer, setTimer] = useState(15)
     const [wait, setWait] = useState(false)
+    const [over, setOver] = useState(false)
+
+    // timer ref
+    const timerRef = useRef(null)
+    const waitRef = useRef(null)
     useEffect(() => {
         // we're just going to return an empty quiz for now
         const newQuiz = {
@@ -46,19 +51,58 @@ const Quiz = (props) => {
         }
         setQuiz(newQuiz)
     }, [])
-    console.log(quiz);
 
+    // timer hook
+    useEffect(() => {
+        if (timer > 0) {
+            timerRef.current = setTimeout(() => {
+                setTimer(timer - 1)
+            }, 1000)
+        } else {
+            setWait(true);
+        }
+    }, [timer]);
+
+    // wait hook
+    useEffect(() => {
+        console.log(waitRef);
+        if (wait) {
+            waitRef.current = setTimeout(() => {
+                console.log(currentQ);
+                if (currentQ + 1 != quiz.questions.length){
+                    setTimer(15)
+                    setCurrentQ(currentQ + 1)
+                    setWait(false)
+                } else {
+                    setOver(true)
+                    setWait(false)
+                }
+            }, 5000)
+        }
+    }, [wait])
+
+    // check answer (for click event)
     const checkAnswer = (e, num) => {
         if (quiz.questions[currentQ].answers[num].correct) {
-            alert("YEPPERS");
+            alert("YEPPERS")
+            setScore(score + 1)
+            clearTimeout(timerRef.current)
+            setWait(true)
+            setTimer(0)
+            
         } else {
-            alert("NOPE");
+            alert("NOPE")
+            clearTimeout(timerRef.current)
+            setWait(true)
+            setTimer(0)
         }
     }
     return (
         <div className="quiz">
             {quiz.questions.length > 0 &&
             <>
+            <div className="timer">Time: {timer}</div>
+            <div className="score">Score: {score}</div>
             <div className="question">
                 {<p>{quiz.questions[currentQ].question}</p>}
                 

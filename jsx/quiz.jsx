@@ -1,21 +1,27 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
+import QuizIntro from './quiz-intro.jsx'
+import QuizBody from './quiz-body.jsx'
 
 const Quiz = (props) => {
     const [quiz, setQuiz] = useState({
         questions: []
     })
-    const [score, setScore] = useState(0)
-    const [currentQ, setCurrentQ] = useState(0)
-    const [timer, setTimer] = useState(15)
-    const [wait, setWait] = useState(false)
+    const [loaded, setLoaded] = useState(false)
+    const [started, setStarted] = useState(false)
+    const [finalScore, setFinalScore] = useState(0)
     const [over, setOver] = useState(false)
 
-    // timer ref
-    const timerRef = useRef(null)
-    const waitRef = useRef(null)
+    const gameover = (score) => {
+        console.log("ok")
+        setFinalScore(score)
+        setOver(true)
+    }
+
     useEffect(() => {
         // we're just going to return an empty quiz for now
         const newQuiz = {
+            name: "Test Quiz",
+            intro: "Hey you! Think you can solve this quiz? Let's go, buster!!",
             questions: [
                 {
                     question: "What is 2 + 2",
@@ -50,82 +56,37 @@ const Quiz = (props) => {
             ]
         }
         setQuiz(newQuiz)
+        setLoaded(true)
     }, [])
 
-    // timer hook
-    useEffect(() => {
-        if (timer > 0) {
-            timerRef.current = setTimeout(() => {
-                setTimer(timer - 1)
-            }, 1000)
-        } else {
-            setWait(true);
-        }
-    }, [timer]);
-
-    // wait hook
-    useEffect(() => {
-        console.log(waitRef);
-        if (wait) {
-            waitRef.current = setTimeout(() => {
-                console.log(currentQ);
-                if (currentQ + 1 != quiz.questions.length){
-                    setTimer(15)
-                    setCurrentQ(currentQ + 1)
-                    setWait(false)
-                } else {
-                    setOver(true)
-                    setWait(false)
-                }
-            }, 5000)
-        }
-    }, [wait])
-
-    // check answer (for click event)
-    const checkAnswer = (e, num) => {
-        if (quiz.questions[currentQ].answers[num].correct) {
-            alert("YEPPERS")
-            setScore(score + 1)
-            clearTimeout(timerRef.current)
-            setWait(true)
-            setTimer(0)
-            
-        } else {
-            alert("NOPE")
-            clearTimeout(timerRef.current)
-            setWait(true)
-            setTimer(0)
-        }
+    const starter = () => {
+        setStarted(true)
     }
-    return (
-        <div className="quiz">
-            {quiz.questions.length > 0 &&
+    if (over) {
+        return (
             <>
-            <div className="timer">Time: {timer}</div>
-            <div className="score">Score: {score}</div>
-            <div className="question">
-                {<p>{quiz.questions[currentQ].question}</p>}
-                
-            </div>
-            <div className="answers">
-                {
-                    quiz.questions[currentQ].answers.map((question, i) => {
-                        return (
-                            <button 
-                                className="answer" 
-                                data-choice={i} 
-                                key={i}
-                                onClick={(e) => checkAnswer(e, i)}>
-                                {question.text}
-                            </button>
-                        )
-                    })
-                }
-            </div>
+                <h2 className>GAME OVER</h2>
+                <div className="score">Score: {finalScore}</div>
             </>
+        )
+    }
+    if (loaded) {
+        return (
+            <div className="quiz">
+            {
+                (!started) ? (
+                    <QuizIntro text={quiz.intro} starter={starter} />
+                ) : (
+                    <QuizBody quiz={quiz} gameover={gameover} />
+                )
             }
-        </div>
+            </div>
+        )
+    } 
+    return (
+        <div className="quiz-loading"></div>
     )
+    
 }
 
 export default Quiz
